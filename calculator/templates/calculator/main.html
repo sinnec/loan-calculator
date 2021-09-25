@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Loan Availability Calculator{% endblock %}
+
+{% block content %}
+    <div class="user">
+        {% if request.user.is_authenticated %}
+            Hello {{ request.user.username }},
+            <a href="{% url 'logout' %}">Logout</a>
+        {% endif %}
+    </div>
+    <h1>Loan Availability Calculator</h1>
+    <table>
+        <tr>
+            <th>Class Name</th>
+            <th>Number of Available Installment Plans</th>
+            <th>Amount (in €)</th>
+            <th>Duration in Months</th>
+        </tr>
+        {% for plan in plans %}
+            <tr>
+                <td>{{ plan.class_name }}</td>
+                <td>{{ plan.available_plans }}</td>
+                <td>{{ plan.amount }}</td>
+                <td>{{ plan.months }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="budget-form">
+        <form method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Calculate"></p>
+        </form>
+    </div>
+    {% if loans == 0 %}
+        <div>Not enough funds to administer a loan!</div>
+    {% elif loans %}
+        <div>The maximum number of loans that can be administered in the next 6 months are {{ loans }}!</div>
+    {% endif %}
+{% endblock %}
